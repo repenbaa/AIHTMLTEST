@@ -82,26 +82,5 @@
     </form>
   </div>
 
-  <script>
-    // 連線到 HiveMQ 公共 Broker (WebSocket)
-    const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
-
-    client.on("connect", () => {
-      console.log("已連線到 HiveMQ Broker");
-    });
-
-    // 表單送出時，把選擇的資料 publish 到 MQTT
-    document.getElementById("controlForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      let payload = {};
-      formData.forEach((value, key) => {
-        payload[key] = value;
-      });
-      const message = JSON.stringify(payload);
-      client.publish("esp32/control", message);
-      alert("已送出設定: " + message);
-    });
-  </script>
 </body>
 </html>
