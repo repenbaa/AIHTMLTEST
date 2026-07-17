@@ -85,14 +85,14 @@
       };
       const message = JSON.stringify(payload);
 
-      /***client.publish("esp32/control", message, { qos: 1, retain: true }, (err) => {
+      client.publish("esp32/control", message, { qos: 1, retain: true }, (err) => {
         if (err) {
           console.error("Publish 失敗:", err);
         } else {
           console.log("已送出:", message);
-          alert("已送出設定: " + message);
+          //alert("已送出設定: " + message);
         }
-      });***/
+      });
 
       // 1 秒後解鎖按鈕
       setTimeout(() => {
