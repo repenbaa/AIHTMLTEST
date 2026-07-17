@@ -7,23 +7,25 @@
 </head>
 <body>
   <h2>ESP32 參數控制器</h2>
-  <form id="controlForm">
+
+  <!-- 不用 form，直接用 div 包起來 -->
+  <div id="controlForm">
     <label>Powertype:
-      <select name="powertype">
+      <select id="powertype">
         <option value="[0,0,0,1]">auto</option>
         <option value="[0,1,0,0]">low</option>
       </select>
     </label>
     <br>
     <label>Temperature:
-      <select name="temperature">
+      <select id="temperature">
         <option value="[0,0,0,0]">17°C</option>
         <option value="[0,0,0,1]">18°C</option>
       </select>
     </label>
     <br>
-    <button type="submit">送出設定資料</button>
-  </form>
+    <button id="sendBtn">送出設定資料</button>
+  </div>
 
   <script>
     // 建立 MQTT client
@@ -33,14 +35,12 @@
       console.log("已連線到 HiveMQ Broker");
     });
 
-    // 攔截表單送出
-    document.getElementById("controlForm").addEventListener("submit", function(e) {
-      e.preventDefault(); // 阻止跳頁
-      const formData = new FormData(this);
-      let payload = {};
-      formData.forEach((value, key) => {
-        payload[key] = value;
-      });
+    // 攔截按鈕事件，而不是 form submit
+    document.getElementById("sendBtn").addEventListener("click", () => {
+      const payload = {
+        powertype: document.getElementById("powertype").value,
+        temperature: document.getElementById("temperature").value
+      };
       const message = JSON.stringify(payload);
 
       if (client.connected) {
