@@ -1,60 +1,24 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>ESP32 參數控制器 + MQTT</title>
+  <title>ESP32 MQTT Test</title>
+  <!-- 引入 MQTT.js -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
-  <h2>ESP32 參數控制器</h2>
-  <form id="controlForm">
-    <label>Powertype:
-      <select name="powertype">
-        <option value="[0,0,0,1]">auto</option>
-        <option value="[0,1,0,0]">low</option>
-      </select>
-    </label>
-    <br>
-    <label>Temperature:
-      <select name="temperature">
-        <option value="[0,0,0,0]">17°C</option>
-        <option value="[0,0,0,1]">18°C</option>
-      </select>
-    </label>
-    <br>
-    <button type="submit">送出設定資料</button>
-  </form>
+  <h2>ESP32 MQTT 測試網頁</h2>
+  <p>打開網頁後會自動送出 "OK" 到 MQTT Broker</p>
 
   <script>
-    // 建立 MQTT client
+    // 連線到 HiveMQ 公共 Broker (WebSocket)
     const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
 
     client.on("connect", () => {
       console.log("已連線到 HiveMQ Broker");
-    });
-
-    // 攔截表單送出
-    document.getElementById("controlForm").addEventListener("submit", function(e) {
-      e.preventDefault(); // 阻止跳頁
-      const formData = new FormData(this);
-      let payload = {};
-      formData.forEach((value, key) => {
-        payload[key] = value;
-      });
-      const message = JSON.stringify(payload);
-
-      if (client.connected) {
-        client.publish("esp32/control", message, {}, (err) => {
-          if (err) {
-            console.error("Publish 失敗:", err);
-          } else {
-            console.log("已送出:", message);
-            alert("已送出設定: " + message);
-          }
-        });
-      } else {
-        alert("MQTT 尚未連線，請稍候再試");
-      }
+      // 發送 "OK" 到主題 esp32/control
+      client.publish("esp32/control", "OK");
+      console.log("已送出 OK");
     });
   </script>
 </body>
