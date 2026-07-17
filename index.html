@@ -1,14 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>ESP32 MQTT Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 參數控制器</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; background-color: #f4f6f9; color: #333; }
+    .container { max-width: 500px; margin: 0 auto; }
+    .card { background: white; margin-bottom: 20px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    h3 { margin-top: 0; color: #2c3e50; border-left: 4px solid #3498db; padding-left: 8px; font-size: 16px; }
+    select { width: 100%; padding: 10px; border: 1px solid #ccd1d9; border-radius: 6px; font-size: 15px; background-color: #fff; cursor: pointer; }
+    select:focus { outline: none; border-color: #3498db; }
+    .btn-submit { width: 100%; padding: 14px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    .btn-submit:hover { background-color: #27ae60; }
+    .alert { margin-bottom: 20px; padding: 12px; border-radius: 6px; font-size: 14px; text-align: center; }
+    .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+  </style>
   <!-- 引入 MQTT.js -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
-  <h2>ESP32 MQTT 測試網頁</h2>
-  <p>打開網頁後會自動送出 "OK" 到 MQTT Broker</p>
+  <div class="container">
+    <h2>ESP32 參數控制器</h2>
+    <form id="controlForm">
+      <!-- Powertype -->
+      <div class="card">
+        <h3>1. 電源類型 (Powertype)</h3>
+        <select name="powertype">
+          <option value="[0,0,0,1]">auto (自動)</option>
+          <option value="[0,1,0,0]">low (低)</option>
+          <option value="[0,0,1,0]">med (中)</option>
+          <option value="[0,0,0,0]">high (高)</option>
+          <option value="[0,0,0,1,0,1,1,1,1,1,1,0]">shutdown (關機)</option>
+        </select>
+      </div>
+
+      <!-- Temperature -->
+      <div class="card">
+        <h3>2. 溫度設定 (Temperature)</h3>
+        <select name="temperature">
+          <option value="[0,0,0,0]">17 °C</option>
+          <option value="[0,0,0,1]">18 °C</option>
+          <option value="[0,0,1,1]">19 °C</option>
+          <option value="[0,0,1,0]">20 °C</option>
+          <option value="[0,1,1,0]">21 °C</option>
+          <option value="[0,1,1,1]">22 °C</option>
+          <option value="[0,1,0,1]">23 °C</option>
+          <option value="[0,1,0,0]">24 °C</option>
+          <option value="[1,1,0,0]">25 °C</option>
+          <option value="[1,1,0,1]">26 °C</option>
+          <option value="[1,0,0,1]">27 °C</option>
+          <option value="[1,0,0,0]">28 °C</option>
+        </select>
+      </div>
+
+      <!-- Mode -->
+      <div class="card">
+        <h3>3. 運作模式 (Mode)</h3>
+        <select name="mode">
+          <option value="[0,0,0,0]">模式 0</option>
+          <option value="[0,0,1,1]">模式 1</option>
+          <option value="[0,1,0,0]">模式 2</option>
+          <option value="[0,0,1,0]">模式 3</option>
+          <option value="[1,0,0,0]">模式 4</option>
+        </select>
+      </div>
+
+      <!-- Timer -->
+      <div class="card">
+        <h3>4. 定時器 (Timer)</h3>
+        <select name="timer">
+          <option value="[0,0,0,0,0,0]">0</option>
+          <option value="[1,0,0,0,0,0]">1</option>
+          <option value="[0,1,0,0,0,0]">2</option>
+          <option value="[1,1,0,0,0,0]">3</option>
+          <!-- 可依需求繼續擴充到 34 -->
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">送出設定資料</button>
+    </form>
+  </div>
 
   <script>
     // 連線到 HiveMQ 公共 Broker (WebSocket)
@@ -16,9 +88,19 @@
 
     client.on("connect", () => {
       console.log("已連線到 HiveMQ Broker");
-      // 發送 "OK" 到主題 esp32/control
-      client.publish("esp32/control", "OK");
-      console.log("已送出 OK");
+    });
+
+    // 表單送出時，把選擇的資料 publish 到 MQTT
+    document.getElementById("controlForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      let payload = {};
+      formData.forEach((value, key) => {
+        payload[key] = value;
+      });
+      const message = JSON.stringify(payload);
+      client.publish("esp32/control", message);
+      alert("已送出設定: " + message);
     });
   </script>
 </body>
