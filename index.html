@@ -1,25 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>ESP32 MQTT Test</title>
-  <!-- 引入 MQTT.js -->
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-</head>
-<body>
-  <h2>ESP32 MQTT 測試網頁</h2>
-  <p>打開網頁後會自動送出 "OK" 到 MQTT Broker</p>
-
-  <script>
-    // 連線到 HiveMQ 公共 Broker (WebSocket)
-    const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
-
-    client.on("connect", () => {
-      console.log("已連線到 HiveMQ Broker");
-      // 發送 "OK" 到主題 esp32/control
-      client.publish("esp32/control", "OK");
-      console.log("已送出 OK");
-    });
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>MQTT 測試頁面</title>
+  </head>
+  <body>
+    <h1>Hello GitHub Pages!</h1>
+    <p>這是測試首頁。</p>
+  </body>
 </html>
