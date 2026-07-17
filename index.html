@@ -8,24 +8,21 @@
 <body>
   <h2>ESP32 參數控制器</h2>
 
-  <!-- 不用 form，直接用 div 包起來 -->
-  <div id="controlForm">
-    <label>Powertype:
-      <select id="powertype">
-        <option value="[0,0,0,1]">auto</option>
-        <option value="[0,1,0,0]">low</option>
-      </select>
-    </label>
-    <br>
-    <label>Temperature:
-      <select id="temperature">
-        <option value="[0,0,0,0]">17°C</option>
-        <option value="[0,0,0,1]">18°C</option>
-      </select>
-    </label>
-    <br>
-    <button id="sendBtn">送出設定資料</button>
-  </div>
+  <label>Powertype:
+    <select id="powertype">
+      <option value="[0,0,0,1]">auto</option>
+      <option value="[0,1,0,0]">low</option>
+    </select>
+  </label>
+  <br>
+  <label>Temperature:
+    <select id="temperature">
+      <option value="[0,0,0,0]">17°C</option>
+      <option value="[0,0,0,1]">18°C</option>
+    </select>
+  </label>
+  <br>
+  <button id="sendBtn" disabled>送出設定資料</button>
 
   <script>
     // 建立 MQTT client
@@ -33,9 +30,9 @@
 
     client.on("connect", () => {
       console.log("已連線到 HiveMQ Broker");
+      document.getElementById("sendBtn").disabled = false; // 連線完成才允許送出
     });
 
-    // 攔截按鈕事件，而不是 form submit
     document.getElementById("sendBtn").addEventListener("click", () => {
       const payload = {
         powertype: document.getElementById("powertype").value,
@@ -43,18 +40,14 @@
       };
       const message = JSON.stringify(payload);
 
-      if (client.connected) {
-        client.publish("esp32/control", message, {}, (err) => {
-          if (err) {
-            console.error("Publish 失敗:", err);
-          } else {
-            console.log("已送出:", message);
-            alert("已送出設定: " + message);
-          }
-        });
-      } else {
-        alert("MQTT 尚未連線，請稍候再試");
-      }
+      client.publish("esp32/control", message, {}, (err) => {
+        if (err) {
+          console.error("Publish 失敗:", err);
+        } else {
+          console.log("已送出:", message);
+          alert("已送出設定: " + message);
+        }
+      });
     });
   </script>
 </body>
