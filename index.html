@@ -17,16 +17,23 @@
 </head>
 <body>
   <div class="container">
-    <h2>ESP32 參數控制器</h2>
+    <h2>冷氣遙控器</h2>
 
     <div class="card">
-      <h3>1. 電源類型 (Powertype)</h3>
+      <h3>0. 電源 (Powertype)</h3>
       <select id="powertype">
+        <option value="on">開機</option>
+        <option value="off">關機</option>
+      </select>
+    </div>
+    <!--
+    <div class="card">
+      <h3>1. 風扇模式 (fanstype)</h3>
+      <select id="fanstype">
         <option value="[0,0,0,1]">auto</option>
         <option value="[0,1,0,0]">low</option>
         <option value="[0,0,1,0]">med</option>
         <option value="[0,0,0,0]">high</option>
-        <option value="[0,0,0,1,0,1,1,1,1,1,1,0]">shutdown</option>
       </select>
     </div>
 
@@ -37,30 +44,37 @@
         <option value="[0,0,0,1]">18°C</option>
         <option value="[0,0,1,1]">19°C</option>
         <option value="[0,0,1,0]">20°C</option>
+        <option value="[0,1,1,0]">21°C</option>
+        <option value="[0,1,1,1]">22°C</option>
+        <option value="[0,1,0,1]">23°C</option>
+        <option value="[0,1,0,0]">24°C</option>
+        <option value="[1,1,0,0]">25°C</option>
+        <option value="[1,1,0,1]">26°C</option>
+        <option value="[1,0,0,1]">27°C</option>
+        <option value="[1,0,0,0]">28°C</option>
       </select>
     </div>
 
     <div class="card">
       <h3>3. 運作模式 (Mode)</h3>
       <select id="mode">
-        <option value="[0,0,0,0]">模式 0</option>
-        <option value="[0,0,1,1]">模式 1</option>
-        <option value="[0,1,0,0]">模式 2</option>
-        <option value="[0,0,1,0]">模式 3</option>
-        <option value="[1,0,0,0]">模式 4</option>
+        <option value="[0,0,0,0]">自動</option>
+        <option value="[0,0,1,1]">冷氣</option>
+        <option value="[0,1,0,0]">除溼</option>
+        <option value="[0,0,1,0]">送風</option>
       </select>
     </div>
 
     <div class="card">
       <h3>4. 定時器 (Timer)</h3>
       <select id="timer">
-        <option value="[0,0,0,0,0,0]">0</option>
-        <option value="[1,0,0,0,0,0]">1</option>
-        <option value="[0,1,0,0,0,0]">2</option>
-        <option value="[1,1,0,0,0,0]">3</option>
+        <option value="[0,0,0,0,0,0]">0.5</option>
+        <option value="[1,0,0,0,0,0]">1.0</option>
+        <option value="[0,1,0,0,0,0]">1.5</option>
+        <option value="[1,1,0,0,0,0]">2.0</option>
       </select>
     </div>
-
+    -->
     <button id="sendBtn" disabled class="btn-submit">送出設定資料</button>
   </div>
 
@@ -78,10 +92,10 @@
       btn.disabled = true; // 暫時封鎖按鈕
 
       const payload = {
-        powertype: document.getElementById("powertype").value,
+        powertype: document.getElementById("powertype").value/*,
         temperature: document.getElementById("temperature").value,
         mode: document.getElementById("mode").value,
-        timer: document.getElementById("timer").value
+        timer: document.getElementById("timer").value*/
       };
       const message = JSON.stringify(payload);
 
